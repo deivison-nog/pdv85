@@ -1,0 +1,86 @@
+:root{
+  --bg:#0b1220;
+  --panel:#0f1b2d;
+  --panel2:#111f35;
+  --stroke:#1f2f4a;
+  --text:#e6eefc;
+  --muted:#7c93b8;
+}
+
+html[data-theme="light"]{
+  --bg:#f6f8fc;
+  --panel:#ffffff;
+  --panel2:#ffffff;
+  --stroke:#e5e7eb;
+  --text:#0f172a;
+  --muted:#475569;
+}
+
+.bg-app{background:var(--bg); color:var(--text);}
+a{color:inherit}
+
+.sidebar{
+  width: 300px; min-height: 100vh;
+  background: var(--panel);
+  border-right: 1px solid var(--stroke);
+  position: sticky; top: 0;
+  display:flex; flex-direction:column;
+}
+
+.bg-panel{ background: color-mix(in srgb, var(--panel) 70%, #000 30%); border: 1px solid var(--stroke); color: var(--text); }
+html[data-theme="light"] .bg-panel{ background:#f8fafc; }
+
+.brand{ display:flex; gap:12px; align-items:center; }
+.brand-badge{
+  width: 44px; height: 44px; border-radius: 14px;
+  background: linear-gradient(90deg, #5b8cff, #2dd4bf);
+}
+
+.card-app{
+  background: var(--panel2);
+  border: 1px solid var(--stroke);
+  border-radius: 18px;
+  color: var(--text);
+}
+
+.card-link{ text-decoration:none; display:block; }
+.card-link:hover{ border-color:#2a446d; transform: translateY(-1px); transition:.12s; }
+
+.topbar{
+  display:flex; justify-content:space-between; align-items:center;
+  padding: 14px 16px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--panel) 90%, #0ea5e9 10%), var(--panel));
+  border: 1px solid var(--stroke);
+  border-radius: 18px;
+}
+
+.placeholder-chart{
+  height: 220px;
+  border-radius: 16px;
+  border: 1px dashed color-mix(in srgb, var(--stroke) 70%, #94a3b8 30%);
+  display:flex; align-items:center; justify-content:center;
+  color: var(--muted);
+}
+
+.nav-pills .nav-link{ color: color-mix(in srgb, var(--text) 90%, #fff 10%); border-radius: 14px; }
+.nav-pills .nav-link.active{
+  background:#142642;
+  border:1px solid #2a446d;
+}
+html[data-theme="light"] .nav-pills .nav-link.active{
+  background:#eef2ff;
+  border:1px solid #c7d2fe;
+  color:#1e3a8a;
+}
+
+.text-secondary{ color: var(--muted) !important; }
+
+/* Forçar PDV claro (independente do tema global) */
+.pdv-force-light{
+  --bg:#f6f8fc;
+  --panel:#ffffff;
+  --panel2:#ffffff;
+  --stroke:#e5e7eb;
+  --text:#0f172a;
+  --muted:#475569;
+}
