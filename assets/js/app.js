@@ -9,7 +9,6 @@ const api = {
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(data ?? {})
     });
-    // tenta sempre ler JSON
     try { return await r.json(); } catch(e) { return { ok:false, error:'Resposta inválida' }; }
   }
 };
@@ -98,7 +97,7 @@ async function initSettings(){
   load();
 }
 
-/* ============ PRODUTOS (com erro amigável 409) ============ */
+/* ============ PRODUTOS ============ */
 async function initProdutos(){
   const tableBody = document.querySelector('#prodTable tbody');
   const search = document.getElementById('prodSearch');
@@ -223,7 +222,6 @@ async function initProdutos(){
     const res = await api.send('api/products.php', method, payload);
 
     if (!res.ok){
-      // aqui pega mensagem amigável "UPC já cadastrado."
       p_error.textContent = res.error || 'Erro ao salvar';
       p_error.classList.remove('d-none');
       return;
@@ -241,7 +239,7 @@ async function initProdutos(){
   await loadProducts();
 }
 
-/* ============ PDV (Enter adiciona match exato) ============ */
+/* ============ PDV (Enter -> match exato UPC) ============ */
 function initPDV(){
   const search = document.getElementById('pdvSearch');
   const results = document.getElementById('pdvResults');
@@ -264,7 +262,6 @@ function initPDV(){
   const btnPrintCoupon = document.getElementById('btnPrintCoupon');
 
   const cart = new Map(); // id -> {product, qty}
-  let lastSaleId = null;
 
   function compute(){
     let subtotal = 0;
@@ -351,13 +348,12 @@ function initPDV(){
     }
   }
 
-  // ENTER: se for numérico, tenta match exato e adiciona direto
+  // ENTER: se digitou/escaneou UPC e der match exato, adiciona direto
   search.addEventListener('keydown', async (e) => {
     if (e.key !== 'Enter') return;
     const q = search.value.trim();
     if (q.length === 0) return;
 
-    // normalmente leitor manda só números
     const onlyDigits = /^\d+$/.test(q);
     if (!onlyDigits) return;
 
@@ -456,12 +452,10 @@ function initPDV(){
       return;
     }
 
-    lastSaleId = res.sale_id;
-
     cart.clear();
     renderCart(); compute();
 
-    couponFrame.src = `cupom.php?sale_id=${lastSaleId}`;
+    couponFrame.src = `cupom.php?sale_id=${res.sale_id}`;
     new bootstrap.Modal(couponModalEl).show();
   }
 
@@ -545,7 +539,6 @@ function initRelatorios(){
     profitEl.textContent = formatBRL(Number(res.data.profit_net));
     discountEl.textContent = formatBRL(Number(res.data.total_discount));
 
-    // chart
     const labels = (res.data.series || []).map(x => x.date);
     const salesData = (res.data.series || []).map(x => Number(x.sales_total));
     const profitData = (res.data.series || []).map(x => Number(x.profit_net));
@@ -562,13 +555,10 @@ function initRelatorios(){
       },
       options: {
         responsive: true,
-        plugins: {
-          legend: { display: true }
-        }
+        plugins: { legend: { display: true } }
       }
     });
 
-    // top products
     topBody.innerHTML = '';
     for (const p of (res.data.top_products || [])){
       const tr = document.createElement('tr');
@@ -582,6 +572,166 @@ function initRelatorios(){
   });
 }
 
-/* ============ CLIENTS/SUPPLIERS (mantém do seu arquivo atual) ============ */
-async function initClients(){ /* ... mantenha a versão que você já tem ... */ }
-async function initSuppliers(){ /* ... mantenha a versão que você já tem ... */ }
+/* ============ CLIENTS ============ */
+async function initClients(){
+  const tbody = document.querySelector('#clientsTable tbody');
+  const q = document.getElementById('clientSearch');
+
+  const c_id = document.getElementById('c_id');
+  const c_name = document.getElementById('c_name');
+  const c_address = document.getElementById('c_address');
+  const c_debt = document.getElementById('c_debt');
+  const c_error = document.getElementById('c_error');
+  const title = document.getElementById('clientModalTitle');
+
+  document.getElementById('btnNewClient')?.addEventListener('click', () => {
+    title.textContent = 'Novo Cliente';
+    c_id.value = '';
+    c_name.value = '';
+    c_address.value = '';
+    c_debt.value = '0';
+    c_error.classList.add('d-none');
+  });
+
+  async function load(){
+    const res = await api.get(`api/clients.php?q=${encodeURIComponent(q.value.trim())}`);
+    tbody.innerHTML = '';
+    if (!res.ok) return;
+
+    for (const c of res.data){
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${escapeHtml(c.name)}</td>
+        <td>${escapeHtml(c.address ?? '')}</td>
+        <td class="text-end">${formatBRL(Number(c.debt))}</td>
+        <td class="text-end">
+          <button class="btn btn-sm btn-outline-light" data-edit="${c.id}">Editar</button>
+          <button class="btn btn-sm btn-outline-danger" data-del="${c.id}">Excluir</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+
+      tr.querySelector('[data-edit]')?.addEventListener('click', () => {
+        title.textContent = 'Editar Cliente';
+        c_id.value = c.id;
+        c_name.value = c.name ?? '';
+        c_address.value = c.address ?? '';
+        c_debt.value = String(c.debt ?? '0').replace('.', ',');
+        c_error.classList.add('d-none');
+        new bootstrap.Modal(document.getElementById('clientModal')).show();
+      });
+
+      tr.querySelector('[data-del]')?.addEventListener('click', async () => {
+        if (!confirm('Excluir cliente?')) return;
+        const r = await api.send('api/clients.php', 'DELETE', { id: c.id });
+        if (!r.ok) { alert(r.error || 'Erro'); return; }
+        load();
+      });
+    }
+  }
+
+  document.getElementById('btnSaveClient')?.addEventListener('click', async () => {
+    c_error.classList.add('d-none');
+    const payload = {
+      id: c_id.value ? Number(c_id.value) : undefined,
+      name: c_name.value.trim(),
+      address: c_address.value.trim(),
+      debt: c_debt.value,
+    };
+    const method = payload.id ? 'PUT' : 'POST';
+    const res = await api.send('api/clients.php', method, payload);
+    if (!res.ok){
+      c_error.textContent = res.error || 'Erro';
+      c_error.classList.remove('d-none');
+      return;
+    }
+    bootstrap.Modal.getInstance(document.getElementById('clientModal'))?.hide();
+    load();
+  });
+
+  document.getElementById('btnRefreshClients')?.addEventListener('click', load);
+  q?.addEventListener('input', debounce(load, 250));
+  load();
+}
+
+/* ============ SUPPLIERS ============ */
+async function initSuppliers(){
+  const tbody = document.querySelector('#suppliersTable tbody');
+  const q = document.getElementById('supplierSearch');
+
+  const s_id = document.getElementById('s_id');
+  const s_name = document.getElementById('s_name');
+  const s_address = document.getElementById('s_address');
+  const s_debt = document.getElementById('s_debt');
+  const s_error = document.getElementById('s_error');
+  const title = document.getElementById('supplierModalTitle');
+
+  document.getElementById('btnNewSupplier')?.addEventListener('click', () => {
+    title.textContent = 'Novo Fornecedor';
+    s_id.value = '';
+    s_name.value = '';
+    s_address.value = '';
+    s_debt.value = '0';
+    s_error.classList.add('d-none');
+  });
+
+  async function load(){
+    const res = await api.get(`api/suppliers.php?q=${encodeURIComponent(q.value.trim())}`);
+    tbody.innerHTML = '';
+    if (!res.ok) return;
+
+    for (const s of res.data){
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${escapeHtml(s.name)}</td>
+        <td>${escapeHtml(s.address ?? '')}</td>
+        <td class="text-end">${formatBRL(Number(s.debt_to_supplier))}</td>
+        <td class="text-end">
+          <button class="btn btn-sm btn-outline-light" data-edit="${s.id}">Editar</button>
+          <button class="btn btn-sm btn-outline-danger" data-del="${s.id}">Excluir</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+
+      tr.querySelector('[data-edit]')?.addEventListener('click', () => {
+        title.textContent = 'Editar Fornecedor';
+        s_id.value = s.id;
+        s_name.value = s.name ?? '';
+        s_address.value = s.address ?? '';
+        s_debt.value = String(s.debt_to_supplier ?? '0').replace('.', ',');
+        s_error.classList.add('d-none');
+        new bootstrap.Modal(document.getElementById('supplierModal')).show();
+      });
+
+      tr.querySelector('[data-del]')?.addEventListener('click', async () => {
+        if (!confirm('Excluir fornecedor?')) return;
+        const r = await api.send('api/suppliers.php', 'DELETE', { id: s.id });
+        if (!r.ok) { alert(r.error || 'Erro'); return; }
+        load();
+      });
+    }
+  }
+
+  document.getElementById('btnSaveSupplier')?.addEventListener('click', async () => {
+    s_error.classList.add('d-none');
+    const payload = {
+      id: s_id.value ? Number(s_id.value) : undefined,
+      name: s_name.value.trim(),
+      address: s_address.value.trim(),
+      debt_to_supplier: s_debt.value,
+    };
+    const method = payload.id ? 'PUT' : 'POST';
+    const res = await api.send('api/suppliers.php', method, payload);
+    if (!res.ok){
+      s_error.textContent = res.error || 'Erro';
+      s_error.classList.remove('d-none');
+      return;
+    }
+    bootstrap.Modal.getInstance(document.getElementById('supplierModal'))?.hide();
+    load();
+  });
+
+  document.getElementById('btnRefreshSuppliers')?.addEventListener('click', load);
+  q?.addEventListener('input', debounce(load, 250));
+  load();
+}
