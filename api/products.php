@@ -12,6 +12,17 @@ require_auth();
 $pdo = db();
 $method = $_SERVER['REQUEST_METHOD'];
 
+function is_duplicate_key(Throwable $e): bool {
+  // MySQL duplicate entry: SQLSTATE 23000 / error 1062
+  if ($e instanceof PDOException) {
+    $code = (string)$e->getCode();
+    if ($code === '23000') return true;
+    // Alguns drivers colocam 1062 em errorInfo[1]
+    if (isset($e->errorInfo[1]) && (int)$e->errorInfo[1] === 1062) return true;
+  }
+  return false;
+}
+
 if ($method === 'GET') {
   $q = trim((string)($_GET['q'] ?? ''));
   $limit = (int)($_GET['limit'] ?? 50);
@@ -84,7 +95,9 @@ if ($method === 'POST') {
     ]);
     json_response(['ok' => true, 'id' => (int)$pdo->lastInsertId()]);
   } catch (Throwable $e) {
-    // upc unique costuma cair aqui
+    if (is_duplicate_key($e)) {
+      json_response(['ok' => false, 'error' => 'UPC já cadastrado.'], 409);
+    }
     json_response(['ok' => false, 'error' => $e->getMessage()], 500);
   }
 }
@@ -119,6 +132,9 @@ if ($method === 'PUT') {
     ]);
     json_response(['ok' => true]);
   } catch (Throwable $e) {
+    if (is_duplicate_key($e)) {
+      json_response(['ok' => false, 'error' => 'UPC já cadastrado.'], 409);
+    }
     json_response(['ok' => false, 'error' => $e->getMessage()], 500);
   }
 }

@@ -26,7 +26,7 @@ ob_start();
   </div>
 </div>
 
-<div class="row g-3">
+<div class="row g-3 mb-3">
   <div class="col-12 col-lg-4">
     <div class="card card-app"><div class="card-body">
       <div class="text-secondary small">Total de vendas (OK)</div>
@@ -44,6 +44,31 @@ ob_start();
       <div class="text-secondary small">Desconto total</div>
       <div class="h4 fw-bold mb-0" id="r_discount">—</div>
     </div></div>
+  </div>
+</div>
+
+<div class="card card-app mb-3">
+  <div class="card-body">
+    <div class="fw-bold mb-2">Vendas e lucro por dia</div>
+    <canvas id="reportChart" height="90"></canvas>
+  </div>
+</div>
+
+<div class="card card-app">
+  <div class="card-body">
+    <div class="fw-bold mb-2">Top produtos por lucro (total no período)</div>
+    <div class="table-responsive">
+      <table class="table table-dark table-hover mb-0" id="topProfitTable">
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>UPC</th>
+            <th class="text-end">Lucro</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </div>
 </div>
 <?php
