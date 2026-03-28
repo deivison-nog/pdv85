@@ -24,7 +24,7 @@ ob_start();
 
 <div class="card card-app">
   <div class="table-responsive">
-    <table class="table table-dark table-hover mb-0" id="clientsTable">
+    <table class="table table-app table-hover mb-0" id="clientsTable">
       <thead>
         <tr>
           <th>Nome</th>

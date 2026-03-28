@@ -10,7 +10,7 @@ ob_start();
 ?>
 <div class="card card-app">
   <div class="table-responsive">
-    <table class="table table-dark table-hover mb-0" id="salesTable">
+    <table class="table table-app table-hover mb-0" id="salesTable">
       <thead>
         <tr>
           <th>#</th><th>Data</th><th>Pagamento</th><th>Status</th>

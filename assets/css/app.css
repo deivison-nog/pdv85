@@ -1,3 +1,34 @@
+/* Tabelas com tema (acompanha dark/light via variáveis) */
+.table-app{
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--text);
+  --bs-table-border-color: var(--stroke);
+  --bs-table-striped-color: var(--text);
+  --bs-table-hover-color: var(--text);
+
+  --bs-table-hover-bg: color-mix(in srgb, var(--panel) 70%, #ffffff 30%);
+  --bs-table-striped-bg: color-mix(in srgb, var(--panel) 85%, #ffffff 15%);
+}
+
+/* Cabeçalho */
+.table-app thead th{
+  background: color-mix(in srgb, var(--panel) 90%, #000 10%);
+  color: var(--text);
+  border-bottom: 1px solid var(--stroke);
+}
+
+/* Linhas */
+.table-app tbody td{
+  background: transparent;
+  border-top: 1px solid var(--stroke);
+}
+
+/* No light, hover/thead ficam mais claros automaticamente pelas variáveis */
+html[data-theme="light"] .table-app{
+  --bs-table-hover-bg: #eef2ff;
+  --bs-table-striped-bg: #f8fafc;
+}
+
 :root{
   --bg:#0b1220;
   --panel:#0f1b2d;

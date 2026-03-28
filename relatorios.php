@@ -58,7 +58,7 @@ ob_start();
   <div class="card-body">
     <div class="fw-bold mb-2">Top produtos por lucro (total no período)</div>
     <div class="table-responsive">
-      <table class="table table-dark table-hover mb-0" id="topProfitTable">
+      <table class="table table-app table-hover mb-0" id="topProfitTable">
         <thead>
           <tr>
             <th>Produto</th>
