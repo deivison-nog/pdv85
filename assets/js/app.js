@@ -115,6 +115,13 @@ async function initProdutos(){
   const p_stock = document.getElementById('p_stock');
   const p_error = document.getElementById('p_error');
 
+  const btnNewCategory = document.getElementById('btnNewCategory');
+  const newCategoryForm = document.getElementById('newCategoryForm');
+  const newCategoryName = document.getElementById('newCategoryName');
+  const btnSaveNewCategory = document.getElementById('btnSaveNewCategory');
+  const btnCancelNewCategory = document.getElementById('btnCancelNewCategory');
+  const newCategoryError = document.getElementById('newCategoryError');
+
   function calcGain(){
     const cost = Number(String(p_cost.value).replace(',','.')) || 0;
     const sale = Number(String(p_price.value).replace(',','.')) || 0;
@@ -230,6 +237,47 @@ async function initProdutos(){
     bootstrap.Modal.getInstance(document.getElementById('productModal'))?.hide();
     loadProducts();
   });
+
+  btnNewCategory?.addEventListener('click', () => {
+    newCategoryForm.classList.toggle('d-none');
+    if (!newCategoryForm.classList.contains('d-none')) {
+      newCategoryName.value = '';
+      newCategoryError.classList.add('d-none');
+      newCategoryName.focus();
+    }
+  });
+
+  btnCancelNewCategory?.addEventListener('click', () => {
+    newCategoryForm.classList.add('d-none');
+  });
+
+  newCategoryName?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); saveNewCategory(); }
+    if (e.key === 'Escape') { newCategoryForm.classList.add('d-none'); }
+  });
+
+  async function saveNewCategory() {
+    const name = newCategoryName.value.trim();
+    if (!name) {
+      newCategoryError.textContent = 'Informe o nome da categoria.';
+      newCategoryError.classList.remove('d-none');
+      return;
+    }
+    newCategoryError.classList.add('d-none');
+    btnSaveNewCategory.disabled = true;
+    const res = await api.send('api/categories.php', 'POST', { name });
+    btnSaveNewCategory.disabled = false;
+    if (!res.ok) {
+      newCategoryError.textContent = res.error || 'Erro ao criar categoria.';
+      newCategoryError.classList.remove('d-none');
+      return;
+    }
+    newCategoryForm.classList.add('d-none');
+    await loadCategories();
+    if (res.id) p_category.value = String(res.id);
+  }
+
+  btnSaveNewCategory?.addEventListener('click', saveNewCategory);
 
   btnRefresh?.addEventListener('click', loadProducts);
   search?.addEventListener('input', debounce(loadProducts, 250));

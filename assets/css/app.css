@@ -106,6 +106,18 @@ html[data-theme="light"] .nav-pills .nav-link.active{
 
 .text-secondary{ color: var(--muted) !important; }
 
+/* btn-outline-light invisível no fundo branco do tema light */
+html[data-theme="light"] .btn-outline-light {
+  --bs-btn-color: #374151;
+  --bs-btn-border-color: #9ca3af;
+  --bs-btn-hover-color: #0f172a;
+  --bs-btn-hover-bg: #e5e7eb;
+  --bs-btn-hover-border-color: #6b7280;
+  --bs-btn-active-color: #0f172a;
+  --bs-btn-active-bg: #d1d5db;
+  --bs-btn-active-border-color: #6b7280;
+}
+
 /* Forçar PDV claro (independente do tema global) */
 .pdv-force-light{
   --bg:#f6f8fc;

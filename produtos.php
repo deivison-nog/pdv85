@@ -69,7 +69,18 @@ ob_start();
           </div>
           <div class="col-12 col-md-3">
             <label class="form-label">Categoria</label>
-            <select class="form-select" id="p_category"></select>
+            <div class="input-group">
+              <select class="form-select" id="p_category"></select>
+              <button class="btn btn-outline-secondary" type="button" id="btnNewCategory" title="Nova categoria">+</button>
+            </div>
+            <div id="newCategoryForm" class="mt-2 d-none">
+              <div class="input-group">
+                <input class="form-control form-control-sm" id="newCategoryName" placeholder="Nome da categoria">
+                <button class="btn btn-sm btn-primary" type="button" id="btnSaveNewCategory">Salvar</button>
+                <button class="btn btn-sm btn-outline-secondary" type="button" id="btnCancelNewCategory">✕</button>
+              </div>
+              <div class="text-danger small mt-1 d-none" id="newCategoryError"></div>
+            </div>
           </div>
 
           <div class="col-12 col-md-4">
