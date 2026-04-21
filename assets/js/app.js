@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (document.getElementById('btnRunReport')) initRelatorios();
   if (document.getElementById('clientsTable')) initClients();
   if (document.getElementById('suppliersTable')) initSuppliers();
+  if (document.getElementById('etqSearch')) initEtiquetas();
 });
 
 /* ============ SETTINGS ============ */
@@ -782,4 +783,140 @@ async function initSuppliers(){
   document.getElementById('btnRefreshSuppliers')?.addEventListener('click', load);
   q?.addEventListener('input', debounce(load, 250));
   load();
+}
+
+/* ============ ETIQUETAS ============ */
+async function initEtiquetas(){
+  let companyName = '';
+  let queue = []; // [{product, qty}]
+
+  // Load company name from settings
+  const settingsRes = await api.get('api/settings.php');
+  if (settingsRes.ok) companyName = settingsRes.data.company_name || '';
+
+  const searchInput   = document.getElementById('etqSearch');
+  const resultsCard   = document.getElementById('etqResultsCard');
+  const resultsBody   = document.getElementById('etqResultsBody');
+  const selectedWrap  = document.getElementById('etqSelectedWrapper');
+  const selectedList  = document.getElementById('etqSelectedList');
+  const previewWrap   = document.getElementById('etqPreviewWrapper');
+  const labelsEl      = document.getElementById('etqLabels');
+  const labelCountEl  = document.getElementById('etqLabelCount');
+  const printArea     = document.getElementById('etqPrintArea');
+  const btnPrint      = document.getElementById('btnPrintLabels');
+
+  function labelHtml(product){
+    const price = formatBRL(Number(product.price || 0));
+    return `<div class="etq-label">
+      <div class="etq-company">${escapeHtml(companyName)}</div>
+      <div class="etq-name">${escapeHtml(product.name)}</div>
+      <div class="etq-price">${price}</div>
+      <div class="etq-upc">${escapeHtml(product.upc || '')}</div>
+    </div>`;
+  }
+
+  function renderLabels(){
+    let html = '';
+    let total = 0;
+    for (const item of queue){
+      for (let i = 0; i < item.qty; i++){
+        html += labelHtml(item.product);
+        total++;
+      }
+    }
+    labelsEl.innerHTML = html;
+    labelCountEl.textContent = `${total} etiqueta${total !== 1 ? 's' : ''}`;
+  }
+
+  function renderQueue(){
+    const hasItems = queue.length > 0;
+    selectedWrap.classList.toggle('d-none', !hasItems);
+    previewWrap.classList.toggle('d-none', !hasItems);
+    btnPrint.disabled = !hasItems;
+
+    selectedList.innerHTML = '';
+    for (const item of queue){
+      const div = document.createElement('div');
+      div.className = 'etq-queue-item';
+      div.innerHTML = `
+        <span class="small">${escapeHtml(item.product.name)}</span>
+        <input type="number" min="1" max="999" value="${item.qty}"
+               class="form-control form-control-sm text-center"
+               style="width:60px" aria-label="Quantidade">
+        <button class="btn btn-sm btn-outline-danger p-0 px-1 lh-1" type="button" title="Remover">✕</button>
+      `;
+
+      div.querySelector('input').addEventListener('change', (e) => {
+        const qty = Math.max(1, parseInt(e.target.value) || 1);
+        e.target.value = qty;
+        item.qty = qty;
+        renderLabels();
+      });
+
+      div.querySelector('button').addEventListener('click', () => {
+        queue = queue.filter(q => q.product.id !== item.product.id);
+        renderQueue();
+      });
+
+      selectedList.appendChild(div);
+    }
+
+    renderLabels();
+  }
+
+  async function doSearch(){
+    const q = searchInput.value.trim();
+    if (!q){ resultsCard.classList.add('d-none'); return; }
+
+    const res = await api.get(`api/products.php?q=${encodeURIComponent(q)}&limit=20`);
+    if (!res.ok || !res.data.length){
+      resultsCard.classList.add('d-none');
+      return;
+    }
+
+    resultsBody.innerHTML = '';
+    for (const p of res.data){
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${escapeHtml(p.name)}</td>
+        <td>${escapeHtml(p.upc ?? '')}</td>
+        <td class="text-end">${formatBRL(Number(p.price || 0))}</td>
+        <td class="text-end">
+          <button class="btn btn-sm btn-primary" type="button">Adicionar</button>
+        </td>
+      `;
+      tr.querySelector('button').addEventListener('click', () => {
+        const existing = queue.find(q => q.product.id === p.id);
+        if (existing){
+          existing.qty++;
+        } else {
+          queue.push({ product: p, qty: 1 });
+        }
+        renderQueue();
+        resultsCard.classList.add('d-none');
+        searchInput.value = '';
+        searchInput.focus();
+      });
+      resultsBody.appendChild(tr);
+    }
+    resultsCard.classList.remove('d-none');
+  }
+
+  function doPrint(){
+    if (queue.length === 0){ alert('Adicione ao menos um produto à fila.'); return; }
+    printArea.innerHTML = labelsEl.innerHTML;
+    window.print();
+  }
+
+  searchInput?.addEventListener('input', debounce(doSearch, 300));
+  searchInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter'){ e.preventDefault(); doSearch(); }
+    if (e.key === 'Escape') resultsCard.classList.add('d-none');
+  });
+  document.getElementById('btnEtqSearch')?.addEventListener('click', doSearch);
+  document.getElementById('btnClearQueue')?.addEventListener('click', () => {
+    queue = [];
+    renderQueue();
+  });
+  btnPrint?.addEventListener('click', doPrint);
 }

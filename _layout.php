@@ -52,6 +52,7 @@ $body_class = $body_class ?? '';
         <li class="nav-item"><a class="nav-link <?= $active==='dashboard'?'active':'' ?>" href="dashboard.php">Dashboard</a></li>
         <li class="nav-item"><a class="nav-link <?= $active==='pdv'?'active':'' ?>" href="pdv.php">PDV / Caixa</a></li>
         <li class="nav-item"><a class="nav-link <?= $active==='produtos'?'active':'' ?>" href="produtos.php">Produtos</a></li>
+        <li class="nav-item"><a class="nav-link <?= $active==='etiquetas'?'active':'' ?>" href="etiquetas.php">Etiquetas</a></li>
         <li class="nav-item"><a class="nav-link <?= $active==='clientes'?'active':'' ?>" href="clientes.php">Clientes</a></li>
         <li class="nav-item"><a class="nav-link <?= $active==='fornecedores'?'active':'' ?>" href="fornecedores.php">Fornecedores</a></li>
         <li class="nav-item"><a class="nav-link <?= $active==='historico'?'active':'' ?>" href="historico.php">Histórico</a></li>
