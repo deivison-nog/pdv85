@@ -11,11 +11,11 @@ ob_start();
 <style>
   /* ===== Label (screen + print) ===== */
   .etq-label {
-    width: 50mm;
-    height: 30mm;
+    width: 60mm;
+    height: 40mm;
     border: 2px solid #cc0000;
     border-radius: 3px;
-    padding: 2mm 2.5mm;
+    padding: 3mm 3.5mm;
     background: #fff;
     color: #000;
     display: flex;
@@ -29,10 +29,10 @@ ob_start();
     overflow: hidden;
     flex-shrink: 0;
   }
-  .etq-company { font-size: 5.5pt; color: #cc0000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; letter-spacing: 0.3px; }
-  .etq-name    { font-size: 7.5pt; font-weight: 700; line-height: 1.2; max-height: 2.5em; overflow: hidden; width: 100%; }
-  .etq-price   { font-size: 15pt; font-weight: 800; line-height: 1; color: #cc0000; }
-  .etq-upc     { font-size: 5pt; color: #555; letter-spacing: 1px; font-family: monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; border-top: 1px dashed #cc0000; padding-top: 0.5mm; }
+  .etq-company { font-size: 7.5pt; color: #cc0000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; letter-spacing: 0.4px; }
+  .etq-name    { font-size: 10pt; font-weight: 700; line-height: 1.2; max-height: 2.5em; overflow: hidden; width: 100%; }
+  .etq-price   { font-size: 20pt; font-weight: 800; line-height: 1; color: #cc0000; }
+  .etq-upc     { font-size: 7pt; color: #555; letter-spacing: 1px; font-family: monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; border-top: 1px dashed #cc0000; padding-top: 0.8mm; }
 
   /* Queue item badge */
   .etq-queue-item {
