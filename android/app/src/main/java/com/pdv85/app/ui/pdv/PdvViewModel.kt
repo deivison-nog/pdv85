@@ -72,7 +72,7 @@ class PdvViewModel : ViewModel() {
         _searchResults.value = emptyList()
     }
 
-    fun subtotal(): Double = cartMap.values.sumOf { it.product.price.toDoubleOrNull() ?: 0.0 * it.qty }
+    fun subtotal(): Double = cartMap.values.sumOf { (it.product.price.toDoubleOrNull() ?: 0.0) * it.qty }
 
     fun total(discount: Double): Double = maxOf(0.0, subtotal() - maxOf(0.0, discount))
 
