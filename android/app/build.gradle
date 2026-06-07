@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.pdv85.app'
+    namespace 'com.info85.pdv85'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.pdv85.app"
+        applicationId "com.info85.pdv85"
         minSdk 24
         targetSdk 34
         versionCode 1

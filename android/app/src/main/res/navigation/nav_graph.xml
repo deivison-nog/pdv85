@@ -5,34 +5,34 @@
     app:startDestination="@id/dashboardFragment">
 
     <fragment android:id="@+id/dashboardFragment"
-        android:name="com.pdv85.app.ui.dashboard.DashboardFragment"
+        android:name="com.info85.pdv85.ui.dashboard.DashboardFragment"
         android:label="@string/nav_dashboard" />
 
     <fragment android:id="@+id/pdvFragment"
-        android:name="com.pdv85.app.ui.pdv.PdvFragment"
+        android:name="com.info85.pdv85.ui.pdv.PdvFragment"
         android:label="@string/nav_pdv" />
 
     <fragment android:id="@+id/productsFragment"
-        android:name="com.pdv85.app.ui.products.ProductsFragment"
+        android:name="com.info85.pdv85.ui.products.ProductsFragment"
         android:label="@string/nav_produtos" />
 
     <fragment android:id="@+id/clientsFragment"
-        android:name="com.pdv85.app.ui.clients.ClientsFragment"
+        android:name="com.info85.pdv85.ui.clients.ClientsFragment"
         android:label="@string/nav_clientes" />
 
     <fragment android:id="@+id/suppliersFragment"
-        android:name="com.pdv85.app.ui.suppliers.SuppliersFragment"
+        android:name="com.info85.pdv85.ui.suppliers.SuppliersFragment"
         android:label="@string/nav_fornecedores" />
 
     <fragment android:id="@+id/historyFragment"
-        android:name="com.pdv85.app.ui.history.HistoryFragment"
+        android:name="com.info85.pdv85.ui.history.HistoryFragment"
         android:label="@string/nav_historico" />
 
     <fragment android:id="@+id/reportsFragment"
-        android:name="com.pdv85.app.ui.reports.ReportsFragment"
+        android:name="com.info85.pdv85.ui.reports.ReportsFragment"
         android:label="@string/nav_relatorios" />
 
     <fragment android:id="@+id/settingsFragment"
-        android:name="com.pdv85.app.ui.settings.SettingsFragment"
+        android:name="com.info85.pdv85.ui.settings.SettingsFragment"
         android:label="@string/nav_configuracoes" />
 </navigation>
