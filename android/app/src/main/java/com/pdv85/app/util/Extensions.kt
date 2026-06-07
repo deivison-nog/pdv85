@@ -7,8 +7,15 @@ import java.util.Locale
 fun Double.toBRL(): String =
     NumberFormat.getCurrencyInstance(Locale("pt", "BR")).format(this)
 
-/** Safe string-to-double (accepts "1.234,56" and "1234.56") */
+/** Safe string-to-double. Accepts Brazilian format ("1.234,56") or plain decimal ("1234,56" / "1234.56").
+ *  Assumes thousands-separator periods are always paired with a comma decimal separator. */
 fun String.toDoubleOrZero(): Double {
-    val clean = this.replace(".", "").replace(",", ".")
-    return clean.toDoubleOrNull() ?: 0.0
+    // If the string contains both '.' and ',' treat '.' as thousands sep (Brazilian format).
+    // Otherwise try replacing comma with period for plain Brazilian decimal.
+    val normalised = if (contains('.') && contains(',')) {
+        replace(".", "").replace(",", ".")
+    } else {
+        replace(",", ".")
+    }
+    return normalised.toDoubleOrNull() ?: 0.0
 }

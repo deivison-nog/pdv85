@@ -16,7 +16,9 @@ $today  = (float)$pdo->query("SELECT IFNULL(SUM(total),0) v FROM sales WHERE sta
 $month  = (float)$pdo->query("SELECT IFNULL(SUM(total),0) v FROM sales WHERE status='OK' AND YEAR(created_at)=YEAR(CURDATE()) AND MONTH(created_at)=MONTH(CURDATE())")->fetchColumn();
 $totalProducts  = (int)$pdo->query("SELECT COUNT(*) c FROM products")->fetchColumn();
 $lowStock       = (int)$cfg['low_stock_threshold'];
-$lowStockCount  = (int)$pdo->query("SELECT COUNT(*) c FROM products WHERE stock <= {$lowStock}")->fetchColumn();
+$stmtLow = $pdo->prepare("SELECT COUNT(*) c FROM products WHERE stock <= :threshold");
+$stmtLow->execute([':threshold' => $lowStock]);
+$lowStockCount  = (int)$stmtLow->fetchColumn();
 
 json_response([
   'ok' => true,

@@ -17,6 +17,7 @@ import com.pdv85.app.databinding.DialogCashPaymentBinding
 import com.pdv85.app.databinding.FragmentPdvBinding
 import com.pdv85.app.util.Result
 import com.pdv85.app.util.toBRL
+import com.pdv85.app.util.toDoubleOrZero
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -130,14 +131,14 @@ class PdvFragment : Fragment() {
     }
 
     private fun updateTotals() {
-        val discount = b.etDiscount.text.toString().replace(",", ".").toDoubleOrNull() ?: 0.0
+        val discount = b.etDiscount.text.toString().toDoubleOrZero()
         b.tvSubtotal.text = vm.subtotal().toBRL()
         b.tvTotal.text = vm.total(discount).toBRL()
     }
 
     private fun onFinalize() {
         val payment = b.spinnerPayment.selectedItem as String
-        val discount = b.etDiscount.text.toString().replace(",", ".").toDoubleOrNull() ?: 0.0
+        val discount = b.etDiscount.text.toString().toDoubleOrZero()
         val total = vm.total(discount)
 
         if (payment == "DINHEIRO") {
@@ -150,11 +151,12 @@ class PdvFragment : Fragment() {
     private fun showCashDialog(total: Double, discount: Double) {
         val db = DialogCashPaymentBinding.inflate(layoutInflater)
         db.tvTotal.text = total.toBRL()
-        db.etPaid.setText(total.toBRL())
+        // Initialize with a plain decimal number so TextWatcher can parse it correctly
+        db.etPaid.setText("%.2f".format(total).replace('.', ','))
 
         db.etPaid.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                val paid = s?.toString()?.replace(",", ".")?.toDoubleOrNull() ?: 0.0
+                val paid = (s?.toString() ?: "").toDoubleOrZero()
                 db.tvChange.text = maxOf(0.0, paid - total).toBRL()
             }
             override fun beforeTextChanged(s: CharSequence?, st: Int, c: Int, a: Int) = Unit
@@ -165,7 +167,7 @@ class PdvFragment : Fragment() {
             .setTitle("Pagamento em Dinheiro")
             .setView(db.root)
             .setPositiveButton("Confirmar") { _, _ ->
-                val paid = db.etPaid.text.toString().replace(",", ".").toDoubleOrNull() ?: 0.0
+                val paid = db.etPaid.text.toString().toDoubleOrZero()
                 if (paid < total) {
                     showError("Valor pago menor que o total.")
                     return@setPositiveButton
