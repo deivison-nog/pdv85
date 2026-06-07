@@ -10,7 +10,5 @@
         android:pathData="M30,54 L50,34 L70,54 L50,74 Z"
         android:strokeColor="#FFFFFFFF"
         android:strokeWidth="2" />
-    <text android:x="34" android:y="62"
-        android:fillColor="#FFFFFFFF"
-        android:textSize="18"/>
+
 </vector>
