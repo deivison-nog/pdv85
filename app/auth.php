@@ -18,6 +18,14 @@ function current_user(): ?array {
 
 function require_auth(): void {
   if (!current_user()) {
+    $isApi = !empty($_SERVER['HTTP_X_REQUESTED_WITH'])
+      && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+    if ($isApi) {
+      http_response_code(401);
+      header('Content-Type: application/json; charset=utf-8');
+      echo json_encode(['ok' => false, 'error' => 'Não autenticado'], JSON_UNESCAPED_UNICODE);
+      exit;
+    }
     header('Location: login.php');
     exit;
   }
