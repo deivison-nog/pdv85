@@ -24,7 +24,7 @@ interface ApiService {
     @GET("api/products.php")
     suspend fun getProducts(
         @Query("q") q: String = "",
-        @Query("limit") limit: Int = 200
+        @Query("limit") limit: Int = 0
     ): Response<ProductListResponse>
 
     @POST("api/products.php")
@@ -42,7 +42,7 @@ interface ApiService {
 
     // ── Sales ─────────────────────────────────────────────────────────────────
     @GET("api/sales.php")
-    suspend fun getSales(@Query("limit") limit: Int = 150): Response<SaleListResponse>
+    suspend fun getSales(@Query("limit") limit: Int = 0): Response<SaleListResponse>
 
     @POST("api/sales.php")
     suspend fun createSale(@Body request: CreateSaleRequest): Response<SaleResponse>

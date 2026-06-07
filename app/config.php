@@ -6,10 +6,10 @@ return [
   'base_url' => '/pdv-info85',
 
   'db' => [
-    'host' => '127.0.0.1',
-    'name' => 'pdv85',
-    'user' => 'root',
-    'pass' => '',
+    'host' => 'srv2036.hstgr.io',
+    'name' => 'u641927335_pdv85',
+    'user' => 'u641927335_pdv85',
+    'pass' => 'pdvDEO01+',
     'charset' => 'utf8mb4',
   ],
 

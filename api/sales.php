@@ -13,16 +13,17 @@ $pdo = db();
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'GET') {
-  $limit = (int)($_GET['limit'] ?? 100);
-  $limit = max(1, min(300, $limit));
+  $limit = (int)($_GET['limit'] ?? 0); // 0 = sem limite (retorna todas)
+  if ($limit < 0) $limit = 0;
+  if ($limit > 0) $limit = min(10000, $limit);
 
-  $stmt = $pdo->prepare("
+  $sql = "
     SELECT id, total, discount_total, payment_method, cash_paid, cash_change, status, created_at
     FROM sales
-    ORDER BY id DESC
-    LIMIT :l
-  ");
-  $stmt->bindValue(':l', $limit, PDO::PARAM_INT);
+    ORDER BY id DESC";
+  if ($limit > 0) $sql .= " LIMIT :l";
+  $stmt = $pdo->prepare($sql);
+  if ($limit > 0) $stmt->bindValue(':l', $limit, PDO::PARAM_INT);
   $stmt->execute();
   json_response(['ok' => true, 'data' => $stmt->fetchAll()]);
 }
