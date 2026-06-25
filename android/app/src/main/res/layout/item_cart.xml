@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="4dp"
+    android:layout_marginVertical="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="12dp">
+
+        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:orientation="vertical" android:layout_marginEnd="8dp">
+            <TextView android:id="@+id/tvName" android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:textStyle="bold"
+                android:textAppearance="?attr/textAppearanceBodyMedium" />
+            <TextView android:id="@+id/tvUpc" android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+        </LinearLayout>
+
+        <TextView android:id="@+id/tvQty" android:layout_width="36dp"
+            android:layout_height="wrap_content" android:gravity="center"
+            android:textStyle="bold" android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:layout_marginHorizontal="8dp">
+            <com.google.android.material.button.MaterialButton android:id="@+id/btnDec"
+                android:layout_width="36dp" android:layout_height="36dp"
+                android:minWidth="0dp" android:minHeight="0dp"
+                android:text="−"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/btnInc"
+                android:layout_width="36dp" android:layout_height="36dp"
+                android:layout_marginStart="4dp" android:minWidth="0dp" android:minHeight="0dp"
+                android:text="+"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+        </LinearLayout>
+
+        <TextView android:id="@+id/tvLineTotal" android:layout_width="90dp"
+            android:layout_height="wrap_content" android:gravity="end"
+            android:textStyle="bold" android:layout_marginEnd="8dp" />
+
+        <com.google.android.material.button.MaterialButton android:id="@+id/btnRemove"
+            android:layout_width="36dp" android:layout_height="36dp"
+            android:minWidth="0dp" android:minHeight="0dp"
+            android:text="✕"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog.Flush" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

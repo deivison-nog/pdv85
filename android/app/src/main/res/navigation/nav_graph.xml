@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/dashboardFragment">
+
+    <fragment android:id="@+id/dashboardFragment"
+        android:name="com.info85.pdv85.ui.dashboard.DashboardFragment"
+        android:label="@string/nav_dashboard" />
+
+    <fragment android:id="@+id/pdvFragment"
+        android:name="com.info85.pdv85.ui.pdv.PdvFragment"
+        android:label="@string/nav_pdv" />
+
+    <fragment android:id="@+id/productsFragment"
+        android:name="com.info85.pdv85.ui.products.ProductsFragment"
+        android:label="@string/nav_produtos" />
+
+    <fragment android:id="@+id/clientsFragment"
+        android:name="com.info85.pdv85.ui.clients.ClientsFragment"
+        android:label="@string/nav_clientes" />
+
+    <fragment android:id="@+id/suppliersFragment"
+        android:name="com.info85.pdv85.ui.suppliers.SuppliersFragment"
+        android:label="@string/nav_fornecedores" />
+
+    <fragment android:id="@+id/historyFragment"
+        android:name="com.info85.pdv85.ui.history.HistoryFragment"
+        android:label="@string/nav_historico" />
+
+    <fragment android:id="@+id/reportsFragment"
+        android:name="com.info85.pdv85.ui.reports.ReportsFragment"
+        android:label="@string/nav_relatorios" />
+
+    <fragment android:id="@+id/settingsFragment"
+        android:name="com.info85.pdv85.ui.settings.SettingsFragment"
+        android:label="@string/nav_configuracoes" />
+</navigation>

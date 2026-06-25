@@ -25,8 +25,9 @@ function is_duplicate_key(Throwable $e): bool {
 
 if ($method === 'GET') {
   $q = trim((string)($_GET['q'] ?? ''));
-  $limit = (int)($_GET['limit'] ?? 50);
-  $limit = max(1, min(200, $limit));
+  $limit = (int)($_GET['limit'] ?? 0); // 0 = sem limite (retorna todos)
+  if ($limit < 0) $limit = 0;
+  if ($limit > 0) $limit = min(10000, $limit);
 
   $baseSelect = "
     SELECT
@@ -37,33 +38,35 @@ if ($method === 'GET') {
   ";
 
   if ($q === '') {
-    $stmt = $pdo->prepare($baseSelect . " ORDER BY p.id DESC LIMIT :l");
-    $stmt->bindValue(':l', $limit, PDO::PARAM_INT);
+    $sql = $baseSelect . " ORDER BY p.id DESC";
+    if ($limit > 0) $sql .= " LIMIT :l";
+    $stmt = $pdo->prepare($sql);
+    if ($limit > 0) $stmt->bindValue(':l', $limit, PDO::PARAM_INT);
     $stmt->execute();
     json_response(['ok' => true, 'data' => $stmt->fetchAll()]);
   }
 
   if (is_digits($q)) {
     $upc = normalize_upc($q);
-    $stmt = $pdo->prepare($baseSelect . "
+    $sql = $baseSelect . "
       WHERE p.upc LIKE :upc
-      ORDER BY (p.upc = :exact) DESC, p.name ASC
-      LIMIT :l
-    ");
+      ORDER BY (p.upc = :exact) DESC, p.name ASC";
+    if ($limit > 0) $sql .= " LIMIT :l";
+    $stmt = $pdo->prepare($sql);
     $stmt->bindValue(':upc', $upc . '%');
     $stmt->bindValue(':exact', $upc);
-    $stmt->bindValue(':l', $limit, PDO::PARAM_INT);
+    if ($limit > 0) $stmt->bindValue(':l', $limit, PDO::PARAM_INT);
     $stmt->execute();
     json_response(['ok' => true, 'data' => $stmt->fetchAll()]);
   }
 
-  $stmt = $pdo->prepare($baseSelect . "
+  $sql = $baseSelect . "
     WHERE p.name LIKE :name
-    ORDER BY p.name ASC
-    LIMIT :l
-  ");
+    ORDER BY p.name ASC";
+  if ($limit > 0) $sql .= " LIMIT :l";
+  $stmt = $pdo->prepare($sql);
   $stmt->bindValue(':name', '%' . $q . '%');
-  $stmt->bindValue(':l', $limit, PDO::PARAM_INT);
+  if ($limit > 0) $stmt->bindValue(':l', $limit, PDO::PARAM_INT);
   $stmt->execute();
   json_response(['ok' => true, 'data' => $stmt->fetchAll()]);
 }
