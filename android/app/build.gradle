@@ -18,7 +18,7 @@ android {
 
         // ▶ Change BASE_URL to your server IP when testing on a physical device.
         // For the Android Emulator, 10.0.2.2 maps to the host machine's localhost.
-        buildConfigField "String", "BASE_URL", '"http://10.0.2.2/pdv-info85/"'
+        buildConfigField "String", "BASE_URL", '"https://pdv.info85.com.br/"'
     }
 
     buildTypes {
